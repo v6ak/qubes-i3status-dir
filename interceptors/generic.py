@@ -21,7 +21,7 @@ class ChainedInterceptor(Interceptor):
 		self._second = second
 	
 	def intercept(self, field: dict) -> dict:
-		self._second.intercept(self._first.intercept(field))
+		return self._second.intercept(self._first.intercept(field))
 
 
 class LiteralInterceptor(Interceptor):
