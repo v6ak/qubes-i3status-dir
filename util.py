@@ -1,5 +1,5 @@
 from typing import Dict
-from interceptors import Interceptor, ProfilingInterceptor, LiteralInterceptor
+from interceptors.generic import Interceptor, ProfilingInterceptor, LiteralInterceptor
 
 
 def profile(interceptors: Dict[str, Interceptor]):

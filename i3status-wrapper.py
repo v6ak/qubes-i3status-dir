@@ -6,7 +6,8 @@ import json
 import sys
 from qubesadmin import Qubes
 from typing import Dict
-from interceptors import *
+from interceptors.generic import *
+from interceptors.qubes_specific import *
 import signal		
 import os
 from util import profile, create_modify_specific_fields, identity
