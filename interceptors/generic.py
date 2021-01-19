@@ -136,3 +136,13 @@ class BatteryInterceptor(Interceptor):
 			'full_text':field['full_text'] + (self._ac_suffix if self._is_ac_powered() else ""),
 			'color': color
 		}
+
+
+class ColorInterceptor(Interceptor):
+	# _color: str
+
+	def __init__(self, color: str):
+		self._color = color
+
+	def intercept(self, field: dict) -> dict:
+		return {**field, 'color': self._color}
