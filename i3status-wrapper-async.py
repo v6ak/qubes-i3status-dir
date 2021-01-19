@@ -105,10 +105,15 @@ async def async_main():
 	
 	potentially_add_skipped_statuses = create_add_skipped_statuses(protocol) if args.profile_skipped_statuses else identity
 	
-	modify = potentially_add_skipped_statuses(create_modify_specific_fields(interceptors=profile_if_requested({
-		'holder_disk_info': DiskInterceptor(qubes), #LatencyInterceptor(100, 5000, ),
-		'holder_running_qubes': RunningQubesInterceptor(qubes),
-	})))
+	modify = potentially_add_skipped_statuses(create_modify_specific_fields(
+		interceptors_by_instance=profile_if_requested({
+			'holder_disk_info': DiskInterceptor(qubes), #LatencyInterceptor(100, 5000, ),
+			'holder_running_qubes': RunningQubesInterceptor(qubes),
+		}),
+		interceptors_by_name=profile_if_requested({
+			'battery': BatteryInterceptor()
+		})
+	))
 	
 	try:
 		while True:

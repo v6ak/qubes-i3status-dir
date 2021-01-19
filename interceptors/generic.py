@@ -2,13 +2,26 @@ import time
 import random
 from abc import ABC, abstractmethod
 from typing import Optional
-
+import re
 
 class Interceptor(ABC):
 	
 	@abstractmethod
 	def intercept(self, field: dict) -> dict:
 		pass
+
+	def then(self, other):
+		return ChainedInterceptor(self, other)
+
+
+class ChainedInterceptor(Interceptor):
+	
+	def __init__(self, first: Interceptor, second: Interceptor):
+		self._first = first
+		self._second = second
+	
+	def intercept(self, field: dict) -> dict:
+		self._second.intercept(self._first.intercept(field))
 
 
 class LiteralInterceptor(Interceptor):
@@ -35,7 +48,7 @@ class ProfilingInterceptor(Interceptor):
 		if self._threshold is not None and diff_ms > self._threshold:
 			self._violations += 1
 		return {
-			**field,
+			**res,
 			'full_text':
 				res['full_text'] +
 					"("+str(round(diff_ms))+"ms"+
@@ -74,3 +87,53 @@ class TimedCachingInterceptor(Interceptor):
 			self._value = self._interceptor.intercept(field)
 		self._counter = (self._counter + 1) % self._period
 		return self._value
+
+
+class AcOnlineInterceptor(Interceptor):
+	# _ac_suffix: str
+	
+	def __init__(self, ac_suffix: str = " AC"):
+		self._ac_suffix = ac_suffix
+		
+	def _is_ac_powered(self):
+		with open("/sys/class/power_supply/AC/online", "rb") as f:
+			return f.read().strip() == b'1'
+	
+	def intercept(self, field: dict) -> dict:
+		return {**field, 'full_text': field['full_text'] + (self._ac_suffix if self._is_ac_powered() else "")}
+
+
+
+BATTERY_PERCENTAGE_PATTERN = re.compile('([0-9]+)%')
+
+#class ColorfurBatteryPercentageInterceptor(Interceptor):
+#
+#	def intercept(self, field: dict) -> dict:
+#		percentage = int(BATTERY_PERCENTAGE_PATTERN.search(field['full_text']).group(1))
+
+
+class BatteryInterceptor(Interceptor):
+	# _ac_suffix: str
+	
+	def __init__(self, ac_suffix: str = " AC"):
+		self._ac_suffix = ac_suffix
+		
+	def _is_ac_powered(self):
+		with open("/sys/class/power_supply/AC/online", "rb") as f:
+			return f.read().strip() == b'1'
+	
+	def intercept(self, field: dict) -> dict:
+		ac = self._is_ac_powered()
+		percentage = int(BATTERY_PERCENTAGE_PATTERN.search(field['full_text']).group(1))
+		color = None
+		if not ac:
+			if percentage < 25:
+				color = '#ff0000'
+			elif percentage < 50:
+				color = '#ffff00'
+
+		return {
+			**field,
+			'full_text':field['full_text'] + (self._ac_suffix if self._is_ac_powered() else ""),
+			'color': color
+		}

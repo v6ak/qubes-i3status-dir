@@ -28,12 +28,14 @@ Just send USR1 to the wrapper, it will do best-effort restart. Unless the protoc
 | ------------- | ----------- | ----------- | ---------------- | ---------------------  | ------------- |
 | Running qubes | Intercepted | Yes         | Yes              | Yes, the code is hacky | Yes           |
 | Disk info     | Intercepted | Yes         | Yes              | No                     | Yes           |
-| Battery       | Native      | Yes         | Probably         | No                     | No            |
+| Battery       | Mixed       | Yes         | Yes\*\*          | No                     | Yes           |
 | Load          | Native      | Yes         | Probably         | No                     | Maybe         |
 | Time          | Native      | Yes         | Yes              | No                     | Yes           |
 | NetVM status* | N/A         | No*         | N/A              | N/A                    | N/A           |
 
 \*) In the Bash-based qubes-i3status, this feature is commented and discouraged from usage for security reasons. Moreover, it does not seem to even be compatible with Qubes 4.0. For this reason, I did not consider this to be high priority. We can achieve feature parity even without implementing this feature.
+
+\*\*) Onfy if compared to the stable version of qubes-i3status. On git, there are few enhancements that need to be implemented.
 
 ## Some other limitations
 

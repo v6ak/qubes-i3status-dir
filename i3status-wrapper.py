@@ -79,10 +79,18 @@ def main():
 	with Popen(["i3status", "-c", os.path.join(os.path.dirname(sys.argv[0]), "i3status.conf")], stdout=PIPE) as proc:
 		qubes = Qubes()
 		restarted = os.environ.get('RESTARTED') == '1'
-		intercept_i3status(proc, restarted, create_modify_specific_fields(interceptors=profile_if_requested({
-			'holder_disk_info': DiskInterceptor(qubes),#LatencyInterceptor(100, 5000, 
-			'holder_running_qubes': RunningQubesInterceptor(qubes),
-		})))
+		potentially_add_skipped_statuses = identity # not supported in the sync script
+		modify = potentially_add_skipped_statuses(create_modify_specific_fields(
+			interceptors_by_instance=profile_if_requested({
+				'holder_disk_info': DiskInterceptor(qubes), #LatencyInterceptor(100, 5000, ),
+				'holder_running_qubes': RunningQubesInterceptor(qubes),
+			}),
+			interceptors_by_name=profile_if_requested({
+				'battery': BatteryInterceptor()
+			})
+		))
+
+		intercept_i3status(proc, restarted, modify)
 
 
 main()
