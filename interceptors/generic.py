@@ -56,3 +56,21 @@ class LatencyInterceptor(Interceptor):
 	def intercept(self, field: dict) -> dict:
 		time.sleep(random.randrange(self._min_latency, self._max_latency)/1000.0)
 		return self._interceptor.intercept(field)
+
+
+class TimedCachingInterceptor(Interceptor):
+	# _period: int
+	# _counter: int
+	# _interceptor: Interceptor
+	# _value: dict
+	
+	def __init__(self, period: int, interceptor: Interceptor):
+		self._period = period
+		self._counter = 0
+		self._interceptor = interceptor
+
+	def intercept(self, field: dict) -> dict:
+		if self._counter == 0:
+			self._value = self._interceptor.intercept(field)
+		self._counter = (self._counter + 1) % self._period
+		return self._value
