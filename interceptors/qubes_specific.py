@@ -91,5 +91,4 @@ class RunningQubesInterceptor(Interceptor):
 			running_xen_domains
 		))
 
-
 		return {'name': 'qubes', 'full_text': str(len(running_qubes)) + " Qubes"}

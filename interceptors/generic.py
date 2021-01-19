@@ -47,13 +47,12 @@ class ProfilingInterceptor(Interceptor):
 		diff_ms = diff_s*1000
 		if self._threshold is not None and diff_ms > self._threshold:
 			self._violations += 1
+		time_str = str(round(diff_ms))+"ms"
+		violations_str = ", "+str(self._violations) +" times >"+str(self._threshold)+"ms" if self._violations > 0 else ""
 		return {
 			**res,
-			'full_text':
-				res['full_text'] +
-					"("+str(round(diff_ms))+"ms"+
-					(", "+str(self._violations) +" times >"+str(self._threshold)+"ms" if self._violations > 0 else "") +
-					")"}
+			'full_text': res['full_text'] + "(" + time_str + violations_str + ")"
+		}
 
 
 class LatencyInterceptor(Interceptor):
