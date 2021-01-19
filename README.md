@@ -29,7 +29,7 @@ Just send USR1 to the wrapper, it will do best-effort restart. Unless the protoc
 | Running qubes | Intercepted | Yes         | Yes              | Yes, the code is hacky | Yes           |
 | Disk info     | Intercepted | Yes         | Yes              | No                     | Yes           |
 | Battery       | Mixed       | Yes         | Yes\*\*          | No                     | Yes           |
-| Load          | Native      | Yes         | Probably         | No                     | Maybe         |
+| Load          | Native      | Yes         | Yes              | No                     | Yes           |
 | Time          | Native      | Yes         | Yes              | No                     | Yes           |
 | NetVM status* | N/A         | No*         | N/A              | N/A                    | N/A           |
 
