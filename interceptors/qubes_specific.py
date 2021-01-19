@@ -48,7 +48,7 @@ class DiskInterceptor(Interceptor):
 		size = int(self._pool.config['size'])
 		usage = int(self._pool.config['usage'])
 		free = size - usage
-		return {'name': 'disk', 'full_text': format_space(free)}
+		return {'name': 'disk', 'full_text': "Disk free: " + format_space(free)}
 
 
 class RunningQubesInterceptor(Interceptor):
