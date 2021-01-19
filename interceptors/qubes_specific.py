@@ -6,34 +6,18 @@ from qubesadmin import Qubes
 from qubesadmin.storage import Pool
 
 
-def format_space_original(num: float) -> str:
+def format_space(num: float) -> str:
 	if num == 0:
 		return "0 Bytes"
 	elif num < 0:
 		raise Error("Unexpected argument: " + str(num))
 	else:
-		order = log10(num)
-		if order <= 4.0:
-			return str(floor(num)) + " Bytes"
-		elif order <= 7.0:
-			return str(floor(num / 1024)) + "K"
-		elif order <= 10.0:
-			return str(floor(num / 1048576)) + "M"
-		elif order <= 13.0:
-			return str(floor(num / 1073741824)) + "G"
-		else:
-			return str(floor(num / 1099511627776)) + "T"
-
-
-def format_space_v6(num: float) -> str:
-	if num == 0:
-		return "0B"
-	elif num < 0:
-		raise Error("Unexpected argument: " + str(num))
-	else:
+		# The original script effectively uses log10, but this brings some bad edge cases when used with rounding down.
+		# For example, 954MiB (=1000341504B) is shown in GiB, but with the rounding down, it shows “0G”.
+		# As a result, it seems reasonable to deviate from this behavior and use log2 instead.
 		order = log2(num)
 		if order <= 10.0:
-			return str(floor(num)) + "B"
+			return str(floor(num)) + " Bytes"
 		elif order <= 20.0:
 			return str(floor(num / 1024)) + "K"
 		elif order <= 30.0:
@@ -42,9 +26,6 @@ def format_space_v6(num: float) -> str:
 			return str(floor(num / 1073741824)) + "G"
 		else:
 			return str(floor(num / 1099511627776)) + "T"
-
-
-format_space = format_space_original
 
 
 class DiskInterceptor(Interceptor):

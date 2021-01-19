@@ -43,6 +43,9 @@ Just send USR1 to the wrapper, it will do best-effort restart. Unless the protoc
 * The wrapper scripts do not properly recognize i3status startup failures.
 * The async script does not recognize that the i3status has exited.
 
+## Intentional deviation from the original qubes-i3status
+
+* Free storage space: Thresholds for units are slightly adjusted in order to prevent some edge cases. For example, 954MiB (=1000341504B) was shown in GiB, but with the rounding down, it shows “0G”. This script shows “954M”.
 
 ## License
 
